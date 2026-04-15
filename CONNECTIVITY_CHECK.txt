@@ -1,0 +1,68 @@
+SENTRA TERMINAL - QUICK CONNECTIVITY CHECK
+===========================================
+
+To verify your frontend and backend are properly connected, follow these steps:
+
+1. BACKEND CHECK
+   
+   Open browser and visit: http://localhost:8000/health
+   
+   Expected Response:
+   {"status":"healthy"}
+   
+   If you get an error, start the backend:
+   - cd backend
+   - python -m uvicorn app.main:app --reload
+
+2. FRONTEND CHECK
+   
+   Open browser and visit: http://localhost:3000
+   
+   You should see the trading dashboard without errors.
+   
+   If you get an error, start the frontend:
+   - cd frontend
+   - npm run dev
+
+3. API CONNECTION CHECK
+   
+   Open browser DevTools (F12) and check:
+   - Console tab: Should have no API errors
+   - Network tab: Look for API calls to http://localhost:8000/
+
+4. ENVIRONMENT CONFIGURATION
+   
+   Verify frontend/.env.local contains:
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   
+   If missing, create the file with the above content.
+
+5. BOTH SERVICES RUNNING
+   
+   If both services are running properly, you should see:
+   - Backend at http://localhost:8000
+   - Frontend at http://localhost:3000
+   - API docs at http://localhost:8000/docs
+
+TROUBLESHOOTING:
+
+- Port 8000 already in use?
+  Get-NetTCPConnection -LocalPort 8000
+  Stop-Process -Id <PID> -Force
+
+- Port 3000 already in use?
+  Get-NetTCPConnection -LocalPort 3000
+  Stop-Process -Id <PID> -Force
+
+- Still having issues?
+  See SETUP_GUIDE.md for detailed troubleshooting
+  See INTEGRATION_GUIDE.md for API documentation
+
+QUICK START:
+
+Windows PowerShell (Automated):
+  .\start-services.ps1
+
+Manual:
+  Terminal 1: cd backend && python -m uvicorn app.main:app --reload
+  Terminal 2: cd frontend && npm run dev

@@ -1,0 +1,50 @@
+{
+  "name": "sentra-terminal",
+  "version": "1.0.0",
+  "description": "Production-grade analytics platform for crypto trading",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.25.0",
+    "@visx/visx": "^3.10.0",
+    "axios": "^1.6.0",
+    "d3": "^7.8.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^10.16.0",
+    "lightweight-charts": "^4.0.0",
+    "lucide-react": "^1.7.0",
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.0",
+    "tailwindcss": "^3.4.0",
+    "three": "^0.159.0",
+    "typescript": "^5.3.0",
+    "zustand": "^4.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.0",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/three": "^0.183.1",
+    "@vitest/coverage-v8": "^0.34.6",
+    "@vitest/ui": "^0.34.6",
+    "autoprefixer": "^10.4.16",
+    "jsdom": "^22.1.0",
+    "playwright": "^1.40.0",
+    "postcss": "^8.4.31",
+    "vitest": "^0.34.6"
+  }
+}
