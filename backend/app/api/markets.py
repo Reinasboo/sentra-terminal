@@ -134,34 +134,32 @@ async def get_market_data(symbol: str):
     Falls back to realistic templates if Pacifica API is unavailable.
     
     Pacifica is the primary source for:
-    - Real-time prices
-    - Funding rates
-    - Open interest
-    - 24h high/low (from OHLCV candles)
-    - 24h volume
+    - Real-time prices (from GET /api/v1/info/prices)
+    - Funding rates (from GET /api/v1/info)
+    - Open interest (from GET /api/v1/info/prices)
+    - 24h volume (from GET /api/v1/info/prices)
     """
     # Extract base symbol (e.g., "BTC-PERP" -> "BTC")
     base_symbol = symbol.split('-')[0] if '-' in symbol else symbol
     
     try:
-        # Fetch from Pacifica API - this is our primary data source
-        market_data = await pacifica_client.get_market_data(base_symbol)
-        
-        if market_data and isinstance(market_data, dict):
-            logger.info(f"Fetched {symbol} data from Pacifica API")
-            return {
-                "symbol": symbol,
-                "price": round(float(market_data.get("price", 0)), 2),
-                "change_24h": round(float(market_data.get("change_24h", 0)), 2),
-                "price_high_24h": round(float(market_data.get("high_24h", market_data.get("price_high_24h", 0))), 2),
-                "price_low_24h": round(float(market_data.get("low_24h", market_data.get("price_low_24h", 0))), 2),
-                "volume_24h": round(float(market_data.get("volume_24h", 0)), 2),
-                "volume_change": round(float(market_data.get("volume_change", 0)), 2),
-                "funding_rate": round(float(market_data.get("funding_rate", 0)), 6),
-                "open_interest": round(float(market_data.get("open_interest", 0)), 2),
-                "open_interest_change": round(float(market_data.get("oi_change_24h", 0)), 2),
-                "source": "pacifica"
-            }
+        # Step 1: Get all prices from Pacifica
+        prices_response = await pacifica_client.get_prices()
+        if prices_response and prices_response.get("success"):
+            prices_data = prices_response.get("data", [])
+            # Find matching symbol in prices array
+            for price_obj in prices_data:
+                if price_obj.get("symbol") == base_symbol:
+                    logger.info(f"Fetched {symbol} data from Pacifica API")
+                    return {
+                        "symbol": symbol,
+                        "price": round(float(price_obj.get("mark", 0)), 2),
+                        "funding_rate": round(float(price_obj.get("funding", 0)), 6),
+                        "open_interest": round(float(price_obj.get("open_interest", 0)), 2),
+                        "volume_24h": round(float(price_obj.get("volume_24h", 0)), 2),
+                        "timestamp": price_obj.get("timestamp"),
+                        "source": "pacifica"
+                    }
     except Exception as e:
         logger.warning(f"Failed to fetch {symbol} from Pacifica API: {e}. Using fallback template.")
     

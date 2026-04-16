@@ -758,3 +758,257 @@ class PacificaClient:
         except Exception as e:
             logger.error(f"Error claiming referral code: {e}")
             return {"status": "error", "message": str(e)}
+    
+    # ============================================================================
+    # PUBLIC MARKET DATA ENDPOINTS (No Authentication Required)
+    # ============================================================================
+    
+    async def get_market_info(self) -> Dict:
+        """
+        Get market info for all symbols (exchange information).
+        
+        Official Pacifica API: GET /api/v1/info
+        
+        Returns:
+            {
+              "success": true,
+              "data": [
+                {
+                  "symbol": "ETH",
+                  "tick_size": "0.1",
+                  "lot_size": "0.0001",
+                  "max_leverage": 50,
+                  "funding_rate": "0.0000125",
+                  "next_funding_rate": "0.0000125",
+                  "created_at": 1748881333944
+                },
+                ...
+              ]
+            }
+        """
+        try:
+            url = f"{self.base_url}/info"
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                logger.info(f"Got market info for {len(data.get('data', []))} symbols from Pacifica")
+                return data
+            else:
+                logger.error(f"Market info API error: {response.status_code}")
+                return {"success": False, "error": f"API error {response.status_code}"}
+        
+        except Exception as e:
+            logger.error(f"Error fetching market info from Pacifica: {e}")
+            return {"success": False, "error": str(e)}
+    
+    async def get_prices(self) -> Dict:
+        """
+        Get current prices for all symbols.
+        
+        Official Pacifica API: GET /api/v1/info/prices
+        
+        Returns:
+            {
+              "success": true,
+              "data": [
+                {
+                  "symbol": "XPL",
+                  "mark": "1.084819",
+                  "funding": "0.00010529",
+                  "open_interest": "3634796",
+                  "volume_24h": "20896698.0672",
+                  "timestamp": 1759222967974
+                },
+                ...
+              ]
+            }
+        """
+        try:
+            url = f"{self.base_url}/info/prices"
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                logger.info(f"Got prices for {len(data.get('data', []))} symbols from Pacifica")
+                return data
+            else:
+                logger.error(f"Prices API error: {response.status_code}")
+                return {"success": False, "error": f"API error {response.status_code}"}
+        
+        except Exception as e:
+            logger.error(f"Error fetching prices from Pacifica: {e}")
+            return {"success": False, "error": str(e)}
+    
+    async def get_candles(
+        self,
+        symbol: str,
+        interval: str = "1m",
+        start_time: Optional[int] = None,
+        end_time: Optional[int] = None,
+        limit: int = 100
+    ) -> Dict:
+        """
+        Get candle data (OHLCV) for a symbol.
+        
+        Official Pacifica API: GET /api/v1/kline
+        
+        Args:
+            symbol: Trading pair (e.g., "BTC", "ETH")
+            interval: Candle interval (1m, 5m, 15m, 1h, 4h, 1d, 1w)
+            start_time: Start time in milliseconds (optional)
+            end_time: End time in milliseconds (optional)
+            limit: Number of candles to return (default 100)
+            
+        Returns:
+            {
+              "success": true,
+              "data": [
+                {
+                  "t": 1748954160000,   # Open time
+                  "T": 1748954220000,   # Close time
+                  "s": "BTC",           # Symbol
+                  "i": "1m",            # Interval
+                  "o": "105376",        # Open
+                  "c": "105376",        # Close
+                  "h": "105376",        # High
+                  "l": "105376",        # Low
+                  "v": "0.00022",       # Volume
+                  "n": 2                # Number of trades
+                },
+                ...
+              ]
+            }
+        """
+        try:
+            params = {
+                "symbol": symbol,
+                "interval": interval,
+                "limit": limit,
+            }
+            if start_time:
+                params["start_time"] = start_time
+            if end_time:
+                params["end_time"] = end_time
+            
+            url = f"{self.base_url}/kline"
+            response = requests.get(url, params=params, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                logger.info(f"Got {len(data.get('data', []))} candles for {symbol} {interval} from Pacifica")
+                return data
+            else:
+                logger.error(f"Candles API error: {response.status_code}")
+                return {"success": False, "error": f"API error {response.status_code}"}
+        
+        except Exception as e:
+            logger.error(f"Error fetching candles from Pacifica: {e}")
+            return {"success": False, "error": str(e)}
+    
+    async def get_recent_trades(
+        self,
+        symbol: str,
+        limit: int = 100
+    ) -> Dict:
+        """
+        Get recent trades for a symbol.
+        
+        Official Pacifica API: GET /api/v1/trades
+        
+        Args:
+            symbol: Trading pair (e.g., "BTC", "ETH")
+            limit: Number of trades to return
+            
+        Returns:
+            {
+              "success": true,
+              "data": [
+                {
+                  "price": "104721",
+                  "amount": "0.0001",
+                  "side": "close_long",
+                  "created_at": 1765006315306
+                },
+                ...
+              ],
+              "last_order_id": 1557404170
+            }
+        """
+        try:
+            params = {
+                "symbol": symbol,
+                "limit": limit,
+            }
+            
+            url = f"{self.base_url}/trades"
+            response = requests.get(url, params=params, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                logger.info(f"Got {len(data.get('data', []))} recent trades for {symbol} from Pacifica")
+                return data
+            else:
+                logger.error(f"Recent trades API error: {response.status_code}")
+                return {"success": False, "error": f"API error {response.status_code}"}
+        
+        except Exception as e:
+            logger.error(f"Error fetching recent trades from Pacifica: {e}")
+            return {"success": False, "error": str(e)}
+    
+    async def get_historical_funding(
+        self,
+        symbol: str,
+        limit: int = 50,
+        cursor: Optional[str] = None
+    ) -> Dict:
+        """
+        Get historical funding rates for a symbol.
+        
+        Official Pacifica API: GET /api/v1/funding_rate/history
+        
+        Args:
+            symbol: Trading pair (e.g., "BTC", "ETH")
+            limit: Number of records to return
+            cursor: Pagination cursor (from previous response)
+            
+        Returns:
+            {
+              "success": true,
+              "data": [
+                {
+                  "funding_rate": "0.0000125",
+                  "next_funding_rate": "0.0000125",
+                  "oracle_price": "117170.410304",
+                  "bid_impact_price": "117126",
+                  "ask_impact_price": "117142",
+                  "created_at": 1753806934249
+                },
+                ...
+              ],
+              "next_cursor": "11114Lz77",
+              "has_more": true
+            }
+        """
+        try:
+            params = {
+                "symbol": symbol,
+                "limit": limit,
+            }
+            if cursor:
+                params["cursor"] = cursor
+            
+            url = f"{self.base_url}/funding_rate/history"
+            response = requests.get(url, params=params, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                logger.info(f"Got {len(data.get('data', []))} funding records for {symbol} from Pacifica")
+                return data
+            else:
+                logger.error(f"Funding history API error: {response.status_code}")
+                return {"success": False, "error": f"API error {response.status_code}"}
+        
+        except Exception as e:
+            logger.error(f"Error fetching funding history from Pacifica: {e}")
+            return {"success": False, "error": str(e)}
