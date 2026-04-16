@@ -18,6 +18,17 @@ SENTIMENT_TEMPLATES = {
     "BTC": {"base_score": 0.68, "sentiment": "Bullish", "mentions": 1245},
     "ETH": {"base_score": 0.62, "sentiment": "Bullish", "mentions": 890},
     "SOL": {"base_score": 0.71, "sentiment": "Very Bullish", "mentions": 560},
+    "AVAX": {"base_score": 0.58, "sentiment": "Neutral", "mentions": 280},
+    "NEAR": {"base_score": 0.65, "sentiment": "Bullish", "mentions": 185},
+    "ARB": {"base_score": 0.55, "sentiment": "Neutral", "mentions": 220},
+    "OP": {"base_score": 0.60, "sentiment": "Neutral", "mentions": 195},
+    "DOGE": {"base_score": 0.72, "sentiment": "Bullish", "mentions": 420},
+    "XRP": {"base_score": 0.59, "sentiment": "Neutral", "mentions": 310},
+    "ADA": {"base_score": 0.52, "sentiment": "Neutral", "mentions": 175},
+    "LINK": {"base_score": 0.64, "sentiment": "Bullish", "mentions": 285},
+    "UNI": {"base_score": 0.61, "sentiment": "Bullish", "mentions": 245},
+    "MATIC": {"base_score": 0.58, "sentiment": "Neutral", "mentions": 265},
+    "ATOM": {"base_score": 0.63, "sentiment": "Bullish", "mentions": 210},
 }
 
 # Realistic whale trades

@@ -23,11 +23,14 @@ export default function DashboardGrid({ symbol = "BTC-PERP" }: DashboardProps) {
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Extract token from symbol (e.g., "BTC-PERP" -> "BTC")
+  const token = symbol.split('-')[0];
+
   // API calls - all data from live endpoints
   const marketQuery = useMarket(symbol);
   const whaleTradesQuery = useWhaleTrades(symbol, 50);
   const liquidationQuery = useLiquidationAnalysis(symbol);
-  const sentimentQuery = useSentiment(symbol);
+  const sentimentQuery = useSentiment(token);
   
   // Mark as hydrated after first render
   useEffect(() => {
@@ -237,17 +240,17 @@ export default function DashboardGrid({ symbol = "BTC-PERP" }: DashboardProps) {
 
       {/* Market Story Timeline */}
       <motion.div variants={itemVariants}>
-        <MarketStoryTimeline />
+        <MarketStoryTimeline symbol={symbol} />
       </motion.div>
 
       {/* Liquidation Radar */}
       <motion.div variants={itemVariants} className="col-span-1 md:col-span-2">
-        <LiquidationRadar />
+        <LiquidationRadar symbol={symbol} />
       </motion.div>
 
       {/* Whale Tracker */}
       <motion.div variants={itemVariants} className="col-span-1 md:col-span-2">
-        <WhaleTracker />
+        <WhaleTracker symbol={symbol} />
       </motion.div>
 
       {/* 3D Liquidation Map */}

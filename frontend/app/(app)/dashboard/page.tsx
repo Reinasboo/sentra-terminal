@@ -1,13 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import DashboardGrid from "@/components/layout/DashboardGrid";
 import GlassPanel from "@/components/ui/GlassPanel";
 import MetricCard from "@/components/ui/MetricCard";
 import { BarChart3, TrendingUp, Zap, Activity } from "lucide-react";
 
+const AVAILABLE_MARKETS = [
+  "BTC-PERP",
+  "ETH-PERP",
+  "SOL-PERP",
+  "AVAX-PERP",
+  "NEAR-PERP",
+  "ARB-PERP",
+  "OP-PERP",
+  "DOGE-PERP",
+  "XRP-PERP",
+  "ADA-PERP",
+  "LINK-PERP",
+  "UNI-PERP",
+  "MATIC-PERP",
+  "ATOM-PERP",
+];
+
 export default function DashboardPage() {
+  const [selectedSymbol, setSelectedSymbol] = useState("BTC-PERP");
+
   return (
     <div className="space-y-8 px-4 md:px-6">
       {/* Page Header */}
@@ -21,8 +40,30 @@ export default function DashboardPage() {
           Trading Dashboard
         </h1>
         <p className="text-text-secondary">
-          Real-time market intelligence and advanced analytics for BTC, ETH, and major altcoins
+          Real-time market intelligence and advanced analytics for all perpetuals
         </p>
+      </motion.div>
+
+      {/* Market Selector */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05, duration: 0.6 }}
+        className="flex gap-2 flex-wrap"
+      >
+        {AVAILABLE_MARKETS.map((symbol) => (
+          <button
+            key={symbol}
+            onClick={() => setSelectedSymbol(symbol)}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              selectedSymbol === symbol
+                ? "bg-accent-blue text-white shadow-glow-blue"
+                : "bg-dark-elevated border border-dark-border hover:border-accent-blue/50 text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            {symbol}
+          </button>
+        ))}
       </motion.div>
 
       {/* Quick Stats Row */}
@@ -75,7 +116,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
       >
-        <DashboardGrid symbol="BTC-PERP" />
+        <DashboardGrid symbol={selectedSymbol} />
       </motion.div>
 
       {/* Footer Info */}

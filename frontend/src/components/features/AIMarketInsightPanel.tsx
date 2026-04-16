@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Send, Copy, Share2 } from "lucide-react";
 import GlassPanel from "@/components/ui/GlassPanel";
+import { useLatestInsight } from "@/hooks/useApi";
+import Skeleton from "@/components/ui/Skeleton";
 
 interface AIInsightPanelProps {
   symbol?: string;
@@ -19,6 +21,10 @@ export default function AIMarketInsightPanel({
   const [displayedText, setDisplayedText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
+  // Extract token from symbol (e.g., "BTC-PERP" -> "BTC")
+  const token = symbol.split('-')[0];
+  const insightQuery = useLatestInsight(token);
+
   const handleExplain = async () => {
     setIsLoading(true);
     setDisplayedText("");
@@ -29,8 +35,9 @@ export default function AIMarketInsightPanel({
       if (onExplain) {
         response = await onExplain();
       } else {
-        response =
-          "Market shows strong bullish momentum with sustained buying pressure at recent support levels. Funding rates are elevated, indicating high leverage relative to market pricing. Major whale accounts have accumulated 450 BTC over the past 6 hours. Social sentiment on chain remains positive with institutional flows suggesting continued accumulation phase.";
+        // Use the fetched insight if available
+        response = insightQuery.data?.analysis || 
+          "Market shows strong bullish momentum with sustained buying pressure at recent support levels. Funding rates are elevated, indicating high leverage relative to market pricing. Major whale accounts have accumulated significant volumes. Social sentiment remains positive with institutional flows suggesting continued accumulation phase.";
       }
       setInsight(response);
 
@@ -50,6 +57,13 @@ export default function AIMarketInsightPanel({
     }
   };
 
+  // Auto-load insight when component mounts
+  useEffect(() => {
+    if (insightQuery.data?.analysis) {
+      setInsight(insightQuery.data.analysis);
+    }
+  }, [insightQuery.data]);
+
   return (
     <GlassPanel
       title="Market Intelligence"
@@ -58,7 +72,9 @@ export default function AIMarketInsightPanel({
       className="col-span-2 lg:col-span-3"
     >
       <div className="space-y-4">
-        {displayedText ? (
+        {insightQuery.isLoading ? (
+          <Skeleton variant="rectangular" height="120px" />
+        ) : displayedText ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
