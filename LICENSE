@@ -1,0 +1,78 @@
+# Sentra Terminal License
+
+## Proprietary Software License
+
+**© 2026 Pacifica Finance. All Rights Reserved.**
+
+### Grant of License
+
+You are granted a limited, non-exclusive, non-transferable license to use Sentra Terminal (the "Software") for your internal business purposes only, subject to the terms and conditions of this license.
+
+### Restrictions
+
+You may not:
+1. Copy, distribute, or transmit the Software to any third party
+2. Modify, adapt, translate, or create derivative works of the Software
+3. Reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code
+4. Rent, lease, lend, or offer the Software for commercial use
+5. Use the Software for any purpose other than as authorized in writing by Pacifica Finance
+6. Remove or alter any proprietary notices, labels, or marks on the Software
+
+### Intellectual Property Rights
+
+All intellectual property rights in the Software, including but not limited to patents, copyrights, trademarks, trade secrets, and other proprietary information, are and remain the sole and exclusive property of Pacifica Finance.
+
+### Disclaimer of Warranties
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+### Limitation of Liability
+
+IN NO EVENT SHALL PACIFICA FINANCE BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFITS, DATA LOSS, OR BUSINESS INTERRUPTION, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+### Termination
+
+This license is effective until terminated. Your rights will terminate automatically without notice if you fail to comply with any terms of this license. Upon termination, you must destroy all copies of the Software in your possession or control.
+
+### Governing Law
+
+This license is governed by the laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+
+### Contact
+
+For licensing inquiries or questions:
+- Email: license@pacifica.fi
+- GitHub: [Reinasboo](https://github.com/Reinasboo)
+
+---
+
+## Open Source Components
+
+Sentra Terminal includes components from the following open-source projects:
+
+### Python Dependencies
+- **FastAPI**: BSD 3-Clause License
+- **SQLAlchemy**: MIT License
+- **Pydantic**: MIT License
+- **aiohttp**: Apache 2.0 License
+- **PyJWT**: MIT License
+- **PyNaCl**: Apache 2.0 License
+- **websockets**: BSD 3-Clause License
+
+### JavaScript/TypeScript Dependencies
+- **Next.js**: MIT License
+- **React**: MIT License
+- **TailwindCSS**: MIT License
+- **Framer Motion**: MIT License
+- **Recharts**: MIT License
+- **shadcn/ui**: MIT License
+- **TanStack Query**: MIT License
+- **Zustand**: MIT License
+
+### Attribution
+
+All third-party libraries are used in accordance with their respective licenses. See `backend/requirements.txt` and `frontend/package.json` for complete dependency lists with version numbers.
+
+---
+
+**Last Updated**: April 16, 2026
