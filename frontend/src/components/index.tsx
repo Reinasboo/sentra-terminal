@@ -1,7 +1,7 @@
 // Main Components
 export { default as Dashboard } from './Dashboard';
 export { default as WhaleTracker } from './WhaleTracker';
-export { default as LiquidationRadar } from './LiquidationRadar';
+export { default as LiquidationRadar } from './features/LiquidationRadar';
 export { default as MarketSentiment } from './MarketSentiment';
 export { default as Navigation } from './Navigation';
 export { default as AIMarketInsight } from './AIMarketInsight';

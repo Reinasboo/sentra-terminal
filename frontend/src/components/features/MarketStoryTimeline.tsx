@@ -22,6 +22,7 @@ interface TimelineEvent {
 
 interface MarketStoryTimelineProps {
   events?: TimelineEvent[];
+  symbol?: string;
 }
 
 const defaultEvents: TimelineEvent[] = [

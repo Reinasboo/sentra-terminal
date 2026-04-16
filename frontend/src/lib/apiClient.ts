@@ -80,7 +80,7 @@ class ApiClient {
               localStorage.setItem('pacifica_refresh_token', refresh_token);
 
               // Retry original request with new token
-              if (config) {
+              if (config && config.headers) {
                 config.headers.Authorization = `Bearer ${access_token}`;
                 return this.client(config);
               }

@@ -2,10 +2,12 @@ import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
-client = TestClient(app)
+@pytest.fixture(scope="session")
+def client():
+    return TestClient(app)
 
 
-def test_liquidation_endpoint():
+def test_liquidation_endpoint(client):
     response = client.get("/analytics/liquidations/BTC")
     assert response.status_code == 200
     data = response.json()
@@ -14,7 +16,7 @@ def test_liquidation_endpoint():
     assert "short_amount" in data
 
 
-def test_trader_leaderboard():
+def test_trader_leaderboard(client):
     response = client.get("/analytics/trader-leaderboard")
     assert response.status_code == 200
     data = response.json()

@@ -207,7 +207,7 @@ export const usePriceStream = (symbols: string[]) => {
     if (ws.isConnected && symbols.length > 0) {
       ws.subscribe('prices', symbols);
 
-      const unsubscribePrices = ws.on('price_update', (message) => {
+      const unsubscribePrices = ws.on('price_update', (message: any) => {
         setPrices((prev) => ({
           ...prev,
           [message.symbol]: message.data,
@@ -235,7 +235,7 @@ export const useSentimentStream = () => {
     if (ws.isConnected) {
       ws.subscribe('sentiment');
 
-      const unsubscribeSentiment = ws.on('sentiment_update', (message) => {
+      const unsubscribeSentiment = ws.on('sentiment_update', (message: any) => {
         setSentiments((prev) => ({
           ...prev,
           [message.token]: message.data,
@@ -263,7 +263,7 @@ export const useLiquidationAlerts = () => {
     if (ws.isConnected) {
       ws.subscribe('liquidations');
 
-      const unsubscribeLiquidations = ws.on('liquidation_alert', (message) => {
+      const unsubscribeLiquidations = ws.on('liquidation_alert', (message: any) => {
         setAlerts((prev) => [message.data, ...prev].slice(0, 50)); // Keep last 50 alerts
       });
 
@@ -288,7 +288,7 @@ export const useWhaleActivity = () => {
     if (ws.isConnected) {
       ws.subscribe('whales');
 
-      const unsubscribeWhales = ws.on('whale_activity', (message) => {
+      const unsubscribeWhales = ws.on('whale_activity', (message: any) => {
         setActivities((prev) => [message.data, ...prev].slice(0, 50)); // Keep last 50 activities
       });
 
