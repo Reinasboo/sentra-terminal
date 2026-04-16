@@ -7,7 +7,10 @@ import { marketApi, analyticsApi, aiApi, tradingApi, apiCall as performApiCall }
 export const useMarkets = () => {
   return useQuery({
     queryKey: ["markets"],
-    queryFn: () => marketApi.getMarkets(),
+    queryFn: async () => {
+      const response = await marketApi.getMarkets();
+      return response.data;
+    },
     refetchInterval: 5000, // Refresh every 5 seconds
   });
 };
@@ -15,7 +18,10 @@ export const useMarkets = () => {
 export const useMarket = (symbol: string) => {
   return useQuery({
     queryKey: ["market", symbol],
-    queryFn: () => marketApi.getMarket(symbol),
+    queryFn: async () => {
+      const response = await marketApi.getMarket(symbol);
+      return response.data;
+    },
     refetchInterval: 5000,
   });
 };
@@ -34,7 +40,10 @@ export const useRefreshMarket = () => {
 export const useLiquidationAnalysis = (symbol: string) => {
   return useQuery({
     queryKey: ["liquidations", symbol],
-    queryFn: () => analyticsApi.getLiquidationAnalysis(symbol),
+    queryFn: async () => {
+      const response = await analyticsApi.getLiquidationAnalysis(symbol);
+      return response.data;
+    },
     refetchInterval: 10000,
   });
 };
@@ -42,7 +51,10 @@ export const useLiquidationAnalysis = (symbol: string) => {
 export const useLiquidationRisk = (symbol: string, price: number) => {
   return useQuery({
     queryKey: ["liquidation-risk", symbol, price],
-    queryFn: () => analyticsApi.getLiquidationRisk(symbol, price),
+    queryFn: async () => {
+      const response = await analyticsApi.getLiquidationRisk(symbol, price);
+      return response.data;
+    },
     refetchInterval: 10000,
   });
 };
@@ -50,7 +62,10 @@ export const useLiquidationRisk = (symbol: string, price: number) => {
 export const useSentiment = (token: string) => {
   return useQuery({
     queryKey: ["sentiment", token],
-    queryFn: () => analyticsApi.getSentiment(token),
+    queryFn: async () => {
+      const response = await analyticsApi.getSentiment(token);
+      return response.data;
+    },
     refetchInterval: 60000,  // Reduced from 30s to 60s to reduce API load
   });
 };
@@ -58,7 +73,10 @@ export const useSentiment = (token: string) => {
 export const useTrendingNarratives = (limit: number = 10) => {
   return useQuery({
     queryKey: ["trending-narratives", limit],
-    queryFn: () => analyticsApi.getTrendingNarratives(limit),
+    queryFn: async () => {
+      const response = await analyticsApi.getTrendingNarratives(limit);
+      return response.data;
+    },
     refetchInterval: 120000,  // Reduced from 60s to 120s - narratives change slower
   });
 };
@@ -66,7 +84,10 @@ export const useTrendingNarratives = (limit: number = 10) => {
 export const useWhales = (symbol: string) => {
   return useQuery({
     queryKey: ["whales", symbol],
-    queryFn: () => analyticsApi.getWhales(symbol),
+    queryFn: async () => {
+      const response = await analyticsApi.getWhales(symbol);
+      return response.data;
+    },
     refetchInterval: 15000,
   });
 };
@@ -74,7 +95,10 @@ export const useWhales = (symbol: string) => {
 export const useWhaleTrades = (symbol: string, limit: number = 50) => {
   return useQuery({
     queryKey: ["whale-trades", symbol, limit],
-    queryFn: () => analyticsApi.getWhaleTrades(symbol, limit),
+    queryFn: async () => {
+      const response = await analyticsApi.getWhaleTrades(symbol, limit);
+      return response.data;
+    },
     refetchInterval: 10000,
   });
 };
@@ -82,14 +106,20 @@ export const useWhaleTrades = (symbol: string, limit: number = 50) => {
 export const useTraderScore = (address: string) => {
   return useQuery({
     queryKey: ["trader", address],
-    queryFn: () => analyticsApi.getTraderScore(address),
+    queryFn: async () => {
+      const response = await analyticsApi.getTraderScore(address);
+      return response.data;
+    },
   });
 };
 
 export const useTraderLeaderboard = (limit: number = 100) => {
   return useQuery({
     queryKey: ["trader-leaderboard", limit],
-    queryFn: () => analyticsApi.getTraderLeaderboard(limit),
+    queryFn: async () => {
+      const response = await analyticsApi.getTraderLeaderboard(limit);
+      return response.data;
+    },
     refetchInterval: 30000,
   });
 };
@@ -97,14 +127,20 @@ export const useTraderLeaderboard = (limit: number = 100) => {
 // AI hooks
 export const useExplainMarketMove = () => {
   return useMutation({
-    mutationFn: (symbol: string = "BTC") => aiApi.explainMarketMove(symbol),
+    mutationFn: async (symbol: string = "BTC") => {
+      const response = await aiApi.explainMarketMove(symbol);
+      return response.data;
+    },
   });
 };
 
 export const useLatestInsight = (symbol: string) => {
   return useQuery({
     queryKey: ["insight", symbol],
-    queryFn: () => aiApi.getLatestInsight(symbol),
+    queryFn: async () => {
+      const response = await aiApi.getLatestInsight(symbol);
+      return response.data;
+    },
     refetchInterval: 30000,
   });
 };
@@ -112,44 +148,65 @@ export const useLatestInsight = (symbol: string) => {
 // Trading hooks
 export const useCreateMarketOrder = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.createMarketOrder(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.createMarketOrder(data);
+      return response.data;
+    },
   });
 };
 
 export const useCreateLimitOrder = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.createLimitOrder(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.createLimitOrder(data);
+      return response.data;
+    },
   });
 };
 
 export const useCreateStopOrder = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.createStopOrder(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.createStopOrder(data);
+      return response.data;
+    },
   });
 };
 
 export const useSetPositionTPSL = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.setPositionTPSL(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.setPositionTPSL(data);
+      return response.data;
+    },
   });
 };
 
 export const useApproveBuilderCode = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.approveBuilderCode(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.approveBuilderCode(data);
+      return response.data;
+    },
   });
 };
 
 export const useRevokeBuilderCode = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.revokeBuilderCode(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.revokeBuilderCode(data);
+      return response.data;
+    },
   });
 };
 
 export const useGetBuilderApprovals = (account: string) => {
   return useQuery({
     queryKey: ["builder-approvals", account],
-    queryFn: () => tradingApi.getBuilderApprovals(account),
+    queryFn: async () => {
+      const response = await tradingApi.getBuilderApprovals(account);
+      return response.data;
+    },
     enabled: !!account,
   });
 };
@@ -157,7 +214,10 @@ export const useGetBuilderApprovals = (account: string) => {
 export const useGetTradeHistory = (account: string, limit: number = 50) => {
   return useQuery({
     queryKey: ["trade-history", account, limit],
-    queryFn: () => tradingApi.getTradeHistory(account, { limit }),
+    queryFn: async () => {
+      const response = await tradingApi.getTradeHistory(account, { limit });
+      return response.data;
+    },
     enabled: !!account,
     refetchInterval: 30000,
   });
@@ -166,7 +226,10 @@ export const useGetTradeHistory = (account: string, limit: number = 50) => {
 export const useGetBuilderTrades = (builderCode: string, limit: number = 50) => {
   return useQuery({
     queryKey: ["builder-trades", builderCode, limit],
-    queryFn: () => tradingApi.getBuilderTrades(builderCode, { limit }),
+    queryFn: async () => {
+      const response = await tradingApi.getBuilderTrades(builderCode, { limit });
+      return response.data;
+    },
     enabled: !!builderCode,
     refetchInterval: 30000,
   });
@@ -175,14 +238,20 @@ export const useGetBuilderTrades = (builderCode: string, limit: number = 50) => 
 export const useGetBuilderOverview = (account: string) => {
   return useQuery({
     queryKey: ["builder-overview", account],
-    queryFn: () => tradingApi.getBuilderOverview(account),
+    queryFn: async () => {
+      const response = await tradingApi.getBuilderOverview(account);
+      return response.data;
+    },
     enabled: !!account,
   });
 };
 
 export const useClaimReferralCode = () => {
   return useMutation({
-    mutationFn: (data: any) => tradingApi.claimReferralCode(data),
+    mutationFn: async (data: any) => {
+      const response = await tradingApi.claimReferralCode(data);
+      return response.data;
+    },
   });
 };
 
@@ -200,7 +269,7 @@ export const useApi = () => {
     setError(null);
     try {
       const response = await performApiCall(endpoint, data, method);
-      return response.data || response;
+      return response?.data || response;
     } catch (err: any) {
       const errorMessage = err?.response?.data?.detail || err?.message || 'API call failed';
       setError(errorMessage);
