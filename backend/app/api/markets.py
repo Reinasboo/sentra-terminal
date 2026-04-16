@@ -3,17 +3,15 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas import Market, MarketCreate
 from app.models import Market as MarketModel
-from app.services.pacifica_service import PacificaClient
+from app.services import pacifica_client
 import random
 import logging
+import asyncio
 
 router = APIRouter(prefix="/markets", tags=["markets"])
 logger = logging.getLogger(__name__)
 
-# Initialize Pacifica client
-pacifica = PacificaClient()
-
-# Realistic market data generator for Solana perpetuals
+# Fallback market data templates for Solana perpetuals (used when Pacifica API unavailable)
 MARKET_TEMPLATES = {
     "BTC-PERP": {
         "base_price": 72450.50,
@@ -130,8 +128,44 @@ MARKET_TEMPLATES = {
 }
 
 
-def get_market_data(symbol: str):
-    """Generate or fetch realistic market data for a symbol"""
+async def get_market_data(symbol: str):
+    """
+    Fetch real market data from Pacifica API.
+    Falls back to realistic templates if Pacifica API is unavailable.
+    
+    Pacifica is the primary source for:
+    - Real-time prices
+    - Funding rates
+    - Open interest
+    - 24h high/low (from OHLCV candles)
+    - 24h volume
+    """
+    # Extract base symbol (e.g., "BTC-PERP" -> "BTC")
+    base_symbol = symbol.split('-')[0] if '-' in symbol else symbol
+    
+    try:
+        # Fetch from Pacifica API - this is our primary data source
+        market_data = await pacifica_client.get_market_data(base_symbol)
+        
+        if market_data and isinstance(market_data, dict):
+            logger.info(f"Fetched {symbol} data from Pacifica API")
+            return {
+                "symbol": symbol,
+                "price": round(float(market_data.get("price", 0)), 2),
+                "change_24h": round(float(market_data.get("change_24h", 0)), 2),
+                "price_high_24h": round(float(market_data.get("high_24h", market_data.get("price_high_24h", 0))), 2),
+                "price_low_24h": round(float(market_data.get("low_24h", market_data.get("price_low_24h", 0))), 2),
+                "volume_24h": round(float(market_data.get("volume_24h", 0)), 2),
+                "volume_change": round(float(market_data.get("volume_change", 0)), 2),
+                "funding_rate": round(float(market_data.get("funding_rate", 0)), 6),
+                "open_interest": round(float(market_data.get("open_interest", 0)), 2),
+                "open_interest_change": round(float(market_data.get("oi_change_24h", 0)), 2),
+                "source": "pacifica"
+            }
+    except Exception as e:
+        logger.warning(f"Failed to fetch {symbol} from Pacifica API: {e}. Using fallback template.")
+    
+    # Fallback: Use realistic template data if Pacifica unavailable
     if symbol not in MARKET_TEMPLATES:
         return None
     
@@ -151,15 +185,19 @@ def get_market_data(symbol: str):
         "funding_rate": template["funding_rate"],
         "open_interest": template["open_interest"],
         "open_interest_change": round(random.uniform(-2, 5), 2),
+        "source": "fallback_template"
     }
 
 
 @router.get("/", response_model=list[dict])
 async def get_markets(db: Session = Depends(get_db)):
-    """Get all markets"""
+    """
+    Get all markets.
+    Data sourced from Pacifica API (primary source for market truth).
+    """
     markets = []
     for symbol in MARKET_TEMPLATES.keys():
-        market_data = get_market_data(symbol)
+        market_data = await get_market_data(symbol)
         if market_data:
             markets.append(market_data)
     return markets
@@ -167,8 +205,16 @@ async def get_markets(db: Session = Depends(get_db)):
 
 @router.get("/{symbol}")
 async def get_market(symbol: str, db: Session = Depends(get_db)):
-    """Get market data for a symbol"""
-    market_data = get_market_data(symbol)
+    """
+    Get market data for a symbol from Pacifica.
+    
+    Returns:
+    - price: Current price from Pacifica
+    - funding_rate: Current funding rate from Pacifica
+    - open_interest: Open interest from Pacifica
+    - volume_24h: 24h volume from Pacifica
+    """
+    market_data = await get_market_data(symbol)
     
     if not market_data:
         return {"symbol": symbol, "error": "Market not found"}
@@ -178,8 +224,11 @@ async def get_market(symbol: str, db: Session = Depends(get_db)):
 
 @router.post("/{symbol}/refresh")
 async def refresh_market_data(symbol: str, db: Session = Depends(get_db)):
-    """Refresh market data from Pacifica API"""
-    market_data = get_market_data(symbol)
+    """
+    Refresh market data from Pacifica API.
+    Called when traders need fresh snapshots.
+    """
+    market_data = await get_market_data(symbol)
     
     if not market_data:
         return {"status": "error", "message": f"Market {symbol} not found"}
