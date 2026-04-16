@@ -60,18 +60,18 @@
   --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   --shadow-glass-lg: 0 8px 32px 0 rgba(31, 38, 135, 0.57);
   
-  --shadow-glow-blue: 0 0 20px rgba(0, 102, 255, 0.4), 0 0 40px rgba(0, 102, 255, 0.2);
-  --shadow-glow-blue-lg: 0 0 30px rgba(0, 102, 255, 0.5), 0 0 60px rgba(0, 102, 255, 0.3);
+  --shadow-glow-blue: 0 0 8px rgba(0, 102, 255, 0.2);
+  --shadow-glow-blue-lg: 0 0 12px rgba(0, 102, 255, 0.25);
   
-  --shadow-glow-green: 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2);
-  --shadow-glow-green-lg: 0 0 20px rgba(0, 255, 136, 0.25), 0 0 40px rgba(0, 255, 136, 0.12);
+  --shadow-glow-green: 0 0 8px rgba(0, 255, 136, 0.15);
+  --shadow-glow-green-lg: 0 0 10px rgba(0, 255, 136, 0.15);
   
-  --shadow-glow-red: 0 0 20px rgba(255, 23, 68, 0.4), 0 0 40px rgba(255, 23, 68, 0.2);
-  --shadow-glow-red-lg: 0 0 20px rgba(255, 23, 68, 0.25), 0 0 40px rgba(255, 23, 68, 0.12);
+  --shadow-glow-red: 0 0 8px rgba(255, 23, 68, 0.15);
+  --shadow-glow-red-lg: 0 0 10px rgba(255, 23, 68, 0.15);
   
-  --shadow-glow-purple: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 40px rgba(124, 58, 237, 0.2);
+  --shadow-glow-purple: 0 0 8px rgba(124, 58, 237, 0.15);
   
-  --shadow-glow-orange: 0 0 20px rgba(255, 107, 53, 0.4), 0 0 40px rgba(255, 107, 53, 0.2);
+  --shadow-glow-orange: 0 0 8px rgba(255, 107, 53, 0.15);
 }
 
 /* Reset */

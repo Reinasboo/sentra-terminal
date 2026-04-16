@@ -14,10 +14,24 @@ interface TradingGlobe3DProps {
  */
 export default function TradingGlobe3D({ height = 400 }: TradingGlobe3DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Setup Intersection Observer to pause animation when offscreen
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -33,6 +47,12 @@ export default function TradingGlobe3D({ height = 400 }: TradingGlobe3DProps) {
     const globeRadius = Math.min(centerX, centerY) - 30;
 
     const animate = () => {
+      // Only render if visible - saves CPU
+      if (!isVisibleRef.current) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+
       rotation += 0.001;
 
       // Clear canvas
@@ -156,16 +176,20 @@ export default function TradingGlobe3D({ height = 400 }: TradingGlobe3DProps) {
 
     animate();
 
-    return () => cancelAnimationFrame(animationId);
+    return () => {
+      cancelAnimationFrame(animationId);
+      observer.disconnect();
+    };
   }, []);
 
   return (
-    <GlassPanel
-      title="Trading Globe"
-      subtitle="Global exchange flows"
-      icon={<Globe size={18} />}
-      className="col-span-1 lg:col-span-2"
-    >
+    <div ref={containerRef}>
+      <GlassPanel
+        title="Trading Globe"
+        subtitle="Global exchange flows"
+        icon={<Globe size={18} />}
+        className="col-span-1 lg:col-span-2"
+      >
       <div className="space-y-4">
         <canvas
           ref={canvasRef}
@@ -185,5 +209,6 @@ export default function TradingGlobe3D({ height = 400 }: TradingGlobe3DProps) {
         </div>
       </div>
     </GlassPanel>
+    </div>
   );
 }

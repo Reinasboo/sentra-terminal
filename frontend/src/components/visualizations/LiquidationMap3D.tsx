@@ -19,6 +19,8 @@ export default function LiquidationMap3D({
   height = 400,
 }: LiquidationMap3DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisibleRef = useRef(true);
 
   // Helper function to convert color to rgba format
   const colorToRgba = (color: string, opacity: number): string => {
@@ -45,6 +47,18 @@ export default function LiquidationMap3D({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Setup Intersection Observer to pause animation when offscreen
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -56,6 +70,12 @@ export default function LiquidationMap3D({
     let time = 0;
 
     const animate = () => {
+      // Only render if visible - saves CPU
+      if (!isVisibleRef.current) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+
       time += 0.01;
 
       // Clear canvas
@@ -160,16 +180,20 @@ export default function LiquidationMap3D({
 
     animate();
 
-    return () => cancelAnimationFrame(animationId);
+    return () => {
+      cancelAnimationFrame(animationId);
+      observer.disconnect();
+    };
   }, []);
 
   return (
-    <GlassPanel
-      title="3D Liquidation Map"
-      subtitle="Heatmap of liquidation hotspots"
-      icon={<Box size={18} />}
-      className="col-span-1 lg:col-span-2"
-    >
+    <div ref={containerRef}>
+      <GlassPanel
+        title="3D Liquidation Map"
+        subtitle="Heatmap of liquidation hotspots"
+        icon={<Box size={18} />}
+        className="col-span-1 lg:col-span-2"
+      >
       <div className="space-y-4">
         <canvas
           ref={canvasRef}
@@ -193,5 +217,6 @@ export default function LiquidationMap3D({
         </div>
       </div>
     </GlassPanel>
+    </div>
   );
 }

@@ -22,7 +22,8 @@ export const useMarket = (symbol: string) => {
       const response = await marketApi.getMarket(symbol);
       return response.data;
     },
-    refetchInterval: 5000,
+    refetchInterval: 30000,
+    staleTime: 25000,
   });
 };
 
@@ -44,7 +45,8 @@ export const useLiquidationAnalysis = (symbol: string) => {
       const response = await analyticsApi.getLiquidationAnalysis(symbol);
       return response.data;
     },
-    refetchInterval: 10000,
+    refetchInterval: 30000,
+    staleTime: 25000,
   });
 };
 
@@ -55,7 +57,8 @@ export const useLiquidationRisk = (symbol: string, price: number) => {
       const response = await analyticsApi.getLiquidationRisk(symbol, price);
       return response.data;
     },
-    refetchInterval: 10000,
+    refetchInterval: 30000,
+    staleTime: 25000,
   });
 };
 
@@ -88,7 +91,8 @@ export const useWhales = (symbol: string) => {
       const response = await analyticsApi.getWhales(symbol);
       return response.data;
     },
-    refetchInterval: 15000,
+    refetchInterval: 30000,
+    staleTime: 25000,
   });
 };
 
@@ -99,7 +103,8 @@ export const useWhaleTrades = (symbol: string, limit: number = 50) => {
       const response = await analyticsApi.getWhaleTrades(symbol, limit);
       return response.data;
     },
-    refetchInterval: 10000,
+    refetchInterval: 30000,
+    staleTime: 25000,
   });
 };
 

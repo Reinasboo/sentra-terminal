@@ -18,8 +18,6 @@ export default function AIMarketInsightPanel({
 }: AIInsightPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [insight, setInsight] = useState<string>("");
-  const [displayedText, setDisplayedText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
 
   // Extract token from symbol (e.g., "BTC-PERP" -> "BTC")
   const token = symbol.split('-')[0];
@@ -27,8 +25,6 @@ export default function AIMarketInsightPanel({
 
   const handleExplain = async () => {
     setIsLoading(true);
-    setDisplayedText("");
-    setIsTyping(true);
 
     try {
       let response: string;
@@ -40,18 +36,6 @@ export default function AIMarketInsightPanel({
           "Market shows strong bullish momentum with sustained buying pressure at recent support levels. Funding rates are elevated, indicating high leverage relative to market pricing. Major whale accounts have accumulated significant volumes. Social sentiment remains positive with institutional flows suggesting continued accumulation phase.";
       }
       setInsight(response);
-
-      // Typing effect
-      let charIndex = 0;
-      const typeInterval = setInterval(() => {
-        if (charIndex < response.length) {
-          setDisplayedText(response.slice(0, charIndex + 1));
-          charIndex++;
-        } else {
-          setIsTyping(false);
-          clearInterval(typeInterval);
-        }
-      }, 15);
     } finally {
       setIsLoading(false);
     }
@@ -74,58 +58,51 @@ export default function AIMarketInsightPanel({
       <div className="space-y-4">
         {insightQuery.isLoading ? (
           <Skeleton variant="rectangular" height="120px" />
-        ) : displayedText ? (
+        ) : insight ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
             className="space-y-3"
           >
-            {/* AI Response Text */}
+            {/* AI Response Text - Show instantly */}
             <div className="text-sm text-text-primary leading-relaxed space-y-2">
               <motion.div
                 className="relative"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
               >
                 <p className="text-sm leading-relaxed text-text-primary">
-                  {displayedText}
+                  {insight}
                 </p>
-                {isTyping && (
-                  <motion.span
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.6, repeat: Infinity }}
-                    className="inline-block w-2 h-4 ml-1 bg-accent-blue rounded-sm align-middle"
-                  />
-                )}
               </motion.div>
             </div>
 
             {/* Action Buttons */}
-            {!isTyping && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-2 pt-4 border-t border-dark-border"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-2 pt-4 border-t border-dark-border"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent-blue/10 hover:bg-accent-blue/20 text-accent-blue text-sm font-medium transition-colors"
               >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent-blue/10 hover:bg-accent-blue/20 text-accent-blue text-sm font-medium transition-colors"
-                >
-                  <Copy size={14} />
-                  Copy
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-dark-elevated text-text-secondary hover:text-text-primary text-sm font-medium transition-colors"
-                >
-                  <Share2 size={14} />
-                  Share
-                </motion.button>
-              </motion.div>
-            )}
+                <Copy size={14} />
+                Copy
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-dark-elevated text-text-secondary hover:text-text-primary text-sm font-medium transition-colors"
+              >
+                <Share2 size={14} />
+                Share
+              </motion.button>
+            </motion.div>
           </motion.div>
         ) : (
           <div className="text-center py-8">
@@ -141,10 +118,10 @@ export default function AIMarketInsightPanel({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleExplain}
-          disabled={isLoading || isTyping}
+          disabled={isLoading}
           className="w-full py-3 px-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-lg font-semibold text-white hover:shadow-lg hover:shadow-accent-blue/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
         >
-          {isLoading || isTyping ? (
+          {isLoading ? (
             <>
               <motion.div
                 animate={{ rotate: 360 }}
